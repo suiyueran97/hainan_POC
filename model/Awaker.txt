@@ -1,0 +1,35 @@
+[Unit]
+Description=Awaker - vLLM Local API Server
+After=local-fs.target
+
+[Service]
+User=lenovo
+WorkingDirectory=/home/lenovo/Zzyq/model
+
+# 修复 PATH：使用系统实际的 CUDA 12.2 路径（apt 安装的路径）
+Environment="PATH=/home/hr/miniconda3/envs/Awaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="CUDA_VISIBLE_DEVICES=0"
+
+# 启动命令（保持不变，确保路径正确）
+ExecStart=/home/lenovo/miniconda3/envs/Awaker/bin/python \
+    -m vllm.entrypoints.openai.api_server \
+    --model /home/lenovo/Zzyq/model/Awaker \
+    --trust-remote-code \
+    --dtype bfloat16 \
+    --max-model-len 20000 \
+    --max-num-batched-tokens 20000 \
+    --gpu-memory-utilization 0.85 \
+    --port 5001 \
+    --host 0.0.0.0
+
+Restart=always
+RestartSec=5
+
+# 确保日志目录存在（否则启动失败）
+StandardOutput=append:/home/lenovo/Zzyq/logs/awaker.out
+StandardError=append:/home/lenovo/Zzyq/logs/awaker.err
+
+ExecStartPre=/bin/sleep 10
+
+[Install]
+WantedBy=multi-user.target

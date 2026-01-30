@@ -1,0 +1,21 @@
+[Unit]
+Description=My Python Project
+After=local-fs.target
+
+[Service]
+# 启动命令（修正路径中的多余斜杠//）
+ExecStart=/home/hr/miniconda3/envs/Awaker/bin/python /home/hr/Zzyq/server.py
+WorkingDirectory=/home/hr/Zzyq
+
+# 若无需root权限，建议改为User=lenovo（更安全）
+User=root
+
+# 环境变量（适配系统实际的CUDA 12.2路径，移除多余//和无效符号>）
+Environment="PATH=/home/hr/miniconda3/envs/Awaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# 异常重启保护
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
